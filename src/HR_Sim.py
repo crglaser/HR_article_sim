@@ -1,5 +1,6 @@
 import numpy as np
 import sys
+import operator
 
 class Team:
     def __init__(self, proj_pa, proj_hr, team_id, ytd_hr = 0):
@@ -17,13 +18,16 @@ def simulate_ros_hr(num_pa, num_hr):
 
     return(sum(pa_list < chance_of_hr))
 
-teams_list = []
+#Set these two first
+offense = True
+num_sims = 10000
 
 dt=np.dtype([('league','S2'), ('team_abbrev','S3'),('ros_pa', int), ('ros_hr', int), ('ytd_hr', int)])
 ros_hr_file = np.loadtxt('..\\data\\ros_hr.csv', delimiter=",", skiprows=1, dtype=dt)
 ros_hra_file= np.loadtxt('..\\data\\ros_hra.csv', delimiter=",", skiprows=1,dtype=dt)
 
-offense = False
+teams_list = []
+
 if offense:
     for row in ros_hr_file:
         teams_list.append(Team(row[2], row[3], row[1], ytd_hr=row[4]))
@@ -34,9 +38,6 @@ else:
 team_total = {}
 highest_count = {}
 lowest_count = {}
-num_sims = 10000
-
-print teams_list
 
 for sim in range(0, num_sims):
     print("Sim #", sim)
@@ -73,7 +74,13 @@ for sim in range(0, num_sims):
         else:
             lowest_count[low_team] = 1
 
+sorted_highest = sorted(highest_count.items(), key=operator.itemgetter(1), reverse=True)
+sorted_lowest = sorted(lowest_count.items(), key=operator.itemgetter(1), reverse=True)
 
-print("high",highest_count)
-print("low",lowest_count)
+print("high",sorted_highest)
+if "NYN" in highest_count:
+    print("NYN high", highest_count["NYN"])
+print("low",sorted_lowest)
+if "NYN" in lowest_count:
+    print("NYN low", lowest_count["NYN"])
 
