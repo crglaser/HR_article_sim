@@ -21,9 +21,11 @@ def simulate_ros_hr(num_pa, num_hr):
 
     return sum(pa_list < chance_of_hr)
 
-# Set these two first
+# Set these first
 offense = True
-num_sims = 10
+num_sims = 100000
+include_nl = True
+include_al = True
 
 # Load csv files which contain league, team abbreviation, projected rest of season pa/hr and year to date hr
 dt=np.dtype([('league','S2'), ('team_abbrev','S3'),('ros_pa', int), ('ros_hr', int), ('ytd_hr', int)])
@@ -35,10 +37,12 @@ teams_list = []
 # Choose batting or pitching projections based on bool above.
 if offense:
     for row in ros_hr_file:
-        teams_list.append(Team(row[2], row[3], row[1], ytd_hr=row[4]))
+        if (include_al and row[0] == 'AL') or (include_nl and row[0] == 'NL'):
+            teams_list.append(Team(row[2], row[3], row[1], ytd_hr=row[4]))
 else:
     for row in ros_hra_file:
-        teams_list.append(Team(row[2], row[3], row[1], ytd_hr=row[4]))
+        if (include_al and row[0] == 'AL') or (include_nl and row[0] == 'NL'):
+            teams_list.append(Team(row[2], row[3], row[1], ytd_hr=row[4]))
 
 team_total = {}
 highest_count = {}
