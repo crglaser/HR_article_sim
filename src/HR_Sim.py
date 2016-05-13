@@ -1,6 +1,7 @@
 import numpy as np
 import sys
 import operator
+import os
 
 
 class Team(object):
@@ -22,15 +23,17 @@ def simulate_ros_hr(num_pa, num_hr):
     return sum(pa_list < chance_of_hr)
 
 # Set these first
-offense = True
-num_sims = 100000
+offense = False
+num_sims = 10
 include_nl = True
 include_al = True
 
 # Load csv files which contain league, team abbreviation, projected rest of season pa/hr and year to date hr
 dt=np.dtype([('league','S2'), ('team_abbrev','S3'),('ros_pa', int), ('ros_hr', int), ('ytd_hr', int)])
-ros_hr_file = np.loadtxt('..\\data\\ros_hr.csv', delimiter=",", skiprows=1, dtype=dt)
-ros_hra_file= np.loadtxt('..\\data\\ros_hra.csv', delimiter=",", skiprows=1,dtype=dt)
+hr_file_location = os.path.relpath("../data/ros_hr.csv")
+ros_hr_file = np.loadtxt(hr_file_location, delimiter=",", skiprows=1, dtype=dt)
+hra_file_location = os.path.relpath("../data/ros_hra.csv")
+ros_hra_file= np.loadtxt(hra_file_location, delimiter=",", skiprows=1,dtype=dt)
 
 teams_list = []
 
